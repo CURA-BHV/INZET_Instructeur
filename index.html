@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>De hulpverleners van BHV land - Instructeur</title>
 
     <!-- PWA Meta Tags -->
@@ -14,115 +13,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BHV Land">
 
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- PWA Manifest injected by vite-plugin-pwa at build time -->
 
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <!-- Icons (relative paths for offline/any base path) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
-    <!-- Google Fonts: Arvo (Rockwell alternative) & Open Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              rockwell: ['Arvo', 'Rockwell', 'Courier New', 'serif'],
-              sans: ['"Open Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            },
-            colors: {
-              team: {
-                red: '#e73546',
-                green: '#63b986',
-                yellow: '#e4e022',
-                orange: '#f28b39',
-              },
-              res: {
-                samenwerking: '#c89b6c',
-                kennis: '#88be43',
-                besluitkracht: '#ae77af',
-                tijd: '#2fb7c2',
-                materiaal: '#3e67af',
-              },
-              catan: {
-                red: '#ee3244',
-                green: '#10b981',
-                yellow: '#e7e514',
-                orange: '#f97316',
-                navy: '#002b47',
-                bg: '#f0f4f8'
-              }
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      body {
-        font-family: "Open Sans", ui-sans-serif, system-ui, sans-serif;
-      }
-      .font-title {
-        font-family: 'Arvo', 'Rockwell', 'Courier New', serif;
-      }
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-      }
-      .hexagon {
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-      }
-      /* Ensure Rockwell-style titles */
-      h1, h2, h3, h4, .font-serif {
-        font-family: 'Arvo', serif;
-      }
-      /* Touch-friendly styles for Android tablets */
-      button, [role="button"], input, select {
-        touch-action: manipulation;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+    <!-- All styles bundled at build time via Tailwind CSS - no CDN needed -->
+    <link rel="stylesheet" href="/index.css">
+  </head>
   <body class="bg-slate-100 text-slate-900 antialiased font-sans">
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-
-  <!-- Service Worker Registration for PWA -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('Service Worker geregistreerd:', registration.scope);
-          })
-          .catch((error) => {
-            console.log('Service Worker registratie mislukt:', error);
-          });
-      });
-    }
-  </script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

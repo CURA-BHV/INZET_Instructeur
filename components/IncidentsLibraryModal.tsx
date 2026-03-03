@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { INCIDENT_SCENARIOS, TEAMS } from '../constants';
+import { CHALLENGE_INCIDENTS, TEAMS } from '../constants';
 import { TeamState, TeamColor } from '../types';
-import { X, Search, AlertCircle, MessageSquare, CheckCircle, Info, CheckSquare, Square, Users, Lock, Zap, Swords, ChevronRight, Trophy } from 'lucide-react';
+import { X, Search, CheckCircle, Info, CheckSquare, Square, Users, Zap, Swords, ChevronRight } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -14,7 +14,6 @@ interface Props {
 
 const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, allTeams, onCompleteChallenge }) => {
   const [filter, setFilter] = useState('');
-  // State for active challenge interaction
   const [challengingIncidentId, setChallengingIncidentId] = useState<number | null>(null);
   const [selectedOpponent, setSelectedOpponent] = useState<TeamColor | null>(null);
   const [challengerCorrect, setChallengerCorrect] = useState<boolean>(false);
@@ -22,24 +21,14 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
 
   if (!isOpen) return null;
 
-  const filteredIncidents = INCIDENT_SCENARIOS.filter(inc => 
-    inc.title.toLowerCase().includes(filter.toLowerCase()) || 
+  const filteredIncidents = CHALLENGE_INCIDENTS.filter(inc =>
+    inc.title.toLowerCase().includes(filter.toLowerCase()) ||
     inc.scenario.toLowerCase().includes(filter.toLowerCase()) ||
     inc.id.toString().includes(filter)
   );
 
   const activeTeamConfig = activeTeam ? TEAMS[activeTeam.color] : null;
-
-  // Map of incidentId -> teamColor that completed it
-  const incidentClaims: Record<number, TeamColor> = {};
   const activeOtherTeams = (Object.values(allTeams) as TeamState[]).filter(t => t.active && t.color !== activeTeam?.color);
-
-  (Object.values(allTeams) as TeamState[]).forEach(t => {
-    if (!t.active) return;
-    t.completedIncidents.forEach(id => {
-      incidentClaims[id] = t.color;
-    });
-  });
 
   const handleStartChallenge = (id: number) => {
     setChallengingIncidentId(id);
@@ -58,7 +47,7 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 font-sans">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh]">
-        
+
         {/* Header */}
         <div className="p-6 bg-red-600 flex justify-between items-center shrink-0">
           <div className="text-white">
@@ -74,8 +63,8 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                   <span className="font-bold">Uitdager: Team {activeTeamConfig?.name}</span>
                </div>
              )}
-             <button 
-                onClick={onClose} 
+             <button
+                onClick={onClose}
                 className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors text-white"
              >
                 <X size={24} />
@@ -87,8 +76,8 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
         <div className="p-4 border-b border-slate-100 bg-slate-50 font-sans">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Zoek scenario op titel of inhoud..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -101,47 +90,27 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
           <div className="grid grid-cols-1 gap-10">
             {filteredIncidents.map((inc) => {
-              const claimingTeamColor = incidentClaims[inc.id];
-              const isClaimedByOther = claimingTeamColor && claimingTeamColor !== activeTeam?.color;
-              const isCompletedByActive = activeTeam?.completedIncidents.includes(inc.id);
               const isCurrentlyChallenging = challengingIncidentId === inc.id;
-              
+
               return (
-                <div 
-                  key={inc.id} 
+                <div
+                  key={inc.id}
                   className={`bg-white rounded-3xl border transition-all duration-300 shadow-sm overflow-hidden flex flex-col min-h-[300px] relative ${
-                    isCompletedByActive ? 'border-green-500 ring-2 ring-green-100 opacity-70' : 
-                    isClaimedByOther ? 'border-slate-200 opacity-50 grayscale' : 
                     isCurrentlyChallenging ? 'border-blue-500 ring-4 ring-blue-100' : 'border-slate-200'
                   }`}
                 >
-                  {/* Claimed Overlay for others */}
-                  {isClaimedByOther && !isCurrentlyChallenging && (
-                    <div className="absolute inset-0 bg-slate-100/10 pointer-events-none flex items-center justify-center z-10">
-                       <div className="bg-white/90 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-xl border border-slate-200 flex items-center gap-3 transform -rotate-2">
-                          <Lock className="text-slate-400" size={20} />
-                          <span className="font-black text-slate-500 uppercase tracking-widest text-sm">
-                            Reeds uitgevoerd in BHV Land
-                          </span>
-                       </div>
-                    </div>
-                  )}
-
                   <div className="flex flex-col lg:flex-row h-full">
                     {/* Left Side: ID & Action */}
                     <div className={`lg:w-28 p-6 flex flex-col items-center border-b lg:border-b-0 lg:border-r shrink-0 transition-colors ${
-                        isCompletedByActive ? 'bg-green-50 border-green-200' : 
                         isCurrentlyChallenging ? 'bg-blue-50 border-blue-200' : 'bg-slate-100 border-slate-200'
                     }`}>
                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl shadow-md mb-8 transition-colors ${
-                        isCompletedByActive ? 'bg-green-600 text-white' : 
-                        isCurrentlyChallenging ? 'bg-blue-600 text-white' :
-                        isClaimedByOther ? 'bg-slate-300 text-slate-500' : 'bg-red-600 text-white'
+                        isCurrentlyChallenging ? 'bg-blue-600 text-white' : 'bg-red-600 text-white'
                         }`}>
                         {inc.id}
                         </div>
-                        
-                        {!isClaimedByOther && !isCurrentlyChallenging && activeTeam && (
+
+                        {!isCurrentlyChallenging && activeTeam && (
                         <button
                             onClick={() => handleStartChallenge(inc.id)}
                             className="w-full flex flex-col items-center gap-2 p-3 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all shadow-lg active:scale-95"
@@ -161,13 +130,6 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                              Annuleren
                            </button>
                         )}
-
-                        {isCompletedByActive && (
-                            <div className="text-green-600 flex flex-col items-center gap-2">
-                                <CheckCircle size={32} />
-                                <span className="text-[10px] font-black uppercase">Klaar</span>
-                            </div>
-                        )}
                     </div>
 
                     {/* Right Side: Flow */}
@@ -176,7 +138,7 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                            <div className="flex items-center justify-between gap-4">
                               <h3 className={`text-2xl font-rockwell font-bold leading-tight ${
                                  isCurrentlyChallenging ? 'text-blue-700' : 'text-slate-800'
-                              } ${isClaimedByOther ? 'line-through opacity-50' : ''}`}>
+                              }`}>
                                  {isCurrentlyChallenging && <Zap size={20} className="inline mr-2 -mt-1" />}
                                  {inc.title}
                               </h3>
@@ -186,10 +148,8 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                                  </div>
                               )}
                            </div>
-                           
-                           <div className={`p-5 bg-amber-50 rounded-2xl border border-amber-100 italic text-slate-700 leading-relaxed shadow-inner ${
-                              isClaimedByOther && !isCurrentlyChallenging ? 'opacity-30' : ''
-                           }`}>
+
+                           <div className={`p-5 bg-amber-50 rounded-2xl border border-amber-100 italic text-slate-700 leading-relaxed shadow-inner`}>
                               <span className="not-italic font-black text-[10px] text-amber-600 uppercase tracking-widest block mb-2">Scenario:</span>
                               "{inc.scenario}"
                            </div>
@@ -210,8 +170,8 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                                             key={t.color}
                                             onClick={() => setSelectedOpponent(t.color)}
                                             className={`px-4 py-2 rounded-xl border-2 font-bold transition-all ${
-                                               selectedOpponent === t.color 
-                                                ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-105' 
+                                               selectedOpponent === t.color
+                                                ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-105'
                                                 : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300'
                                             }`}
                                           >
@@ -226,32 +186,31 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-top-2">
                                        {/* Challenger Question */}
                                        <div className="p-6 rounded-3xl bg-white border-2 border-slate-100 shadow-sm relative overflow-hidden flex flex-col">
-                                          <div className={`absolute top-0 right-0 px-3 py-1 text-[8px] font-black text-white uppercase tracking-tighter rounded-bl-xl`} style={{ backgroundColor: activeTeamConfig?.hex }}>
+                                          <div className="absolute top-0 right-0 px-3 py-1 text-[8px] font-black text-white uppercase tracking-tighter rounded-bl-xl" style={{ backgroundColor: activeTeamConfig?.hex }}>
                                              Uitdaging door {activeTeamConfig?.name}
                                           </div>
                                           <p className="text-xs font-black text-slate-400 uppercase mb-3">Vraag 1 (Uitdager)</p>
-                                          <p className="font-bold text-slate-800 mb-4">{inc.questions[0].question}</p>
-                                          
-                                          {/* Options Display */}
+                                          <p className="font-bold text-slate-800 mb-4">{inc.q1.question}</p>
+
                                           <div className="space-y-2 mb-6 flex-1">
-                                             {inc.questions[0].options.map((opt, i) => (
+                                             {inc.q1.options.map((opt, i) => (
                                                 <div key={i} className={`p-2 rounded-lg text-sm border ${
-                                                   opt.startsWith(inc.questions[0].answer) ? 'bg-green-50 border-green-200 text-green-800 font-bold' : 'bg-slate-50 border-slate-100 text-slate-600'
+                                                   opt === inc.q1.correctAnswer ? 'bg-green-50 border-green-200 text-green-800 font-bold' : 'bg-slate-50 border-slate-100 text-slate-600'
                                                 }`}>
                                                    {opt}
-                                                   {opt.startsWith(inc.questions[0].answer) && <span className="ml-2 text-[10px] uppercase opacity-60">(Juist)</span>}
+                                                   {opt === inc.q1.correctAnswer && <span className="ml-2 text-[10px] uppercase opacity-60">(Juist)</span>}
                                                 </div>
                                              ))}
                                           </div>
 
                                           <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
-                                             <button 
+                                             <button
                                                 onClick={() => setChallengerCorrect(true)}
                                                 className={`flex-1 py-3 rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2 transition-all ${challengerCorrect ? 'bg-green-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
                                              >
                                                 {challengerCorrect ? <CheckSquare size={16} /> : <Square size={16} />} Goed (+1 kaart)
                                              </button>
-                                             <button 
+                                             <button
                                                 onClick={() => setChallengerCorrect(false)}
                                                 className={`px-4 py-3 rounded-xl font-black text-xs uppercase transition-all ${!challengerCorrect ? 'bg-red-50 text-red-400 border border-red-100' : 'text-slate-300'}`}
                                              >
@@ -266,28 +225,27 @@ const IncidentsLibraryModal: React.FC<Props> = ({ isOpen, onClose, activeTeam, a
                                              Verdediging door {TEAMS[selectedOpponent].name}
                                           </div>
                                           <p className="text-xs font-black text-slate-400 uppercase mb-3">Vraag 2 (Tegenstander)</p>
-                                          <p className="font-bold text-slate-800 mb-4">{inc.questions[1].question}</p>
+                                          <p className="font-bold text-slate-800 mb-4">{inc.q2.question}</p>
 
-                                          {/* Options Display */}
                                           <div className="space-y-2 mb-6 flex-1">
-                                             {inc.questions[1].options.map((opt, i) => (
+                                             {inc.q2.options.map((opt, i) => (
                                                 <div key={i} className={`p-2 rounded-lg text-sm border ${
-                                                   opt.startsWith(inc.questions[1].answer) ? 'bg-green-50 border-green-200 text-green-800 font-bold' : 'bg-slate-50 border-slate-100 text-slate-600'
+                                                   opt === inc.q2.correctAnswer ? 'bg-green-50 border-green-200 text-green-800 font-bold' : 'bg-slate-50 border-slate-100 text-slate-600'
                                                 }`}>
                                                    {opt}
-                                                   {opt.startsWith(inc.questions[1].answer) && <span className="ml-2 text-[10px] uppercase opacity-60">(Juist)</span>}
+                                                   {opt === inc.q2.correctAnswer && <span className="ml-2 text-[10px] uppercase opacity-60">(Juist)</span>}
                                                 </div>
                                              ))}
                                           </div>
 
                                           <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
-                                             <button 
+                                             <button
                                                 onClick={() => setOpponentCorrect(true)}
                                                 className={`flex-1 py-3 rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2 transition-all ${opponentCorrect ? 'bg-green-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
                                              >
                                                 {opponentCorrect ? <CheckSquare size={16} /> : <Square size={16} />} Goed (+2 kaarten)
                                              </button>
-                                             <button 
+                                             <button
                                                 onClick={() => setOpponentCorrect(false)}
                                                 className={`px-4 py-3 rounded-xl font-black text-xs uppercase transition-all ${!opponentCorrect ? 'bg-red-50 text-red-400 border border-red-100' : 'text-slate-300'}`}
                                              >

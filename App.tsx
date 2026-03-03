@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TEAMS } from './constants';
 import { TeamState, TeamColor } from './types';
 import TeamCard from './components/TeamCard';
 import ChallengeModal from './components/ChallengeModal';
 import Leaderboard from './components/Leaderboard';
-import { Users, LayoutDashboard, Crown } from 'lucide-react';
+import { Users, LayoutDashboard, Crown, RotateCcw } from 'lucide-react';
+
+const STORAGE_KEY = 'bhv-land-game-state';
 
 const initialTeamState = (color: TeamColor): TeamState => ({
   color,
@@ -18,10 +20,20 @@ const initialTeamState = (color: TeamColor): TeamState => ({
   answeredQuestions: []
 });
 
+const loadSavedState = (): { view: 'setup' | 'dashboard'; teams: Record<TeamColor, TeamState> } | null => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch { /* ignore parse errors */ }
+  return null;
+};
+
 const App: React.FC = () => {
-  const [view, setView] = useState<'setup' | 'dashboard'>('setup');
-  
-  const [teams, setTeams] = useState<Record<TeamColor, TeamState>>({
+  const saved = loadSavedState();
+
+  const [view, setView] = useState<'setup' | 'dashboard'>(saved?.view ?? 'setup');
+
+  const [teams, setTeams] = useState<Record<TeamColor, TeamState>>(saved?.teams ?? {
     red: initialTeamState('red'),
     green: initialTeamState('green'),
     yellow: initialTeamState('yellow'),
@@ -29,6 +41,13 @@ const App: React.FC = () => {
   });
 
   const [challengeChallenger, setChallengeChallenger] = useState<TeamState | null>(null);
+
+  // Persist state to localStorage on every change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ view, teams }));
+    } catch { /* ignore quota errors */ }
+  }, [view, teams]);
 
   const toggleTeamActive = (color: TeamColor) => {
     setTeams(prev => ({
@@ -48,6 +67,17 @@ const App: React.FC = () => {
     }));
   };
 
+  const handleResetGame = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setTeams({
+      red: initialTeamState('red'),
+      green: initialTeamState('green'),
+      yellow: initialTeamState('yellow'),
+      orange: initialTeamState('orange'),
+    });
+    setView('setup');
+  }, []);
+
   const activeTeamsList = (Object.values(teams) as TeamState[]).filter(t => t.active);
   const hasActiveTeams = activeTeamsList.length > 0;
 
@@ -65,13 +95,21 @@ const App: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             {view === 'dashboard' && (
-              <button 
+              <button
                 onClick={() => setView('setup')}
                 className="text-sm font-black uppercase text-slate-400 hover:text-indigo-600 transition-colors tracking-tighter"
               >
                 Instellingen
               </button>
             )}
+            <button
+              onClick={handleResetGame}
+              className="text-sm font-black uppercase text-slate-400 hover:text-red-600 transition-colors tracking-tighter flex items-center gap-1"
+              title="Nieuw spel starten"
+            >
+              <RotateCcw size={14} />
+              Reset
+            </button>
           </div>
         </div>
       </nav>
