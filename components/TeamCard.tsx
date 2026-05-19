@@ -72,7 +72,7 @@ const TeamCard: React.FC<Props> = ({
                     <Sword size={20} />
                 </div>
                 <div>
-                    <p className="font-black text-indigo-900 uppercase text-xs">Duel om Grondstoffen</p>
+                    <p className="font-black text-indigo-900 uppercase text-xs">Duel om de inzetmiddelen</p>
                 </div>
             </div>
             
@@ -82,7 +82,7 @@ const TeamCard: React.FC<Props> = ({
             >
                 Team Uitdagen
             </button>
-            <p className="text-[9px] text-center mt-3 text-slate-400 font-bold uppercase tracking-tighter">Win kaarten voor bouwmaterialen</p>
+            <p className="text-[9px] text-center mt-3 text-slate-400 font-bold uppercase tracking-tighter">Win tokens door een incident op te lossen</p>
         </div>
       </div>
 
