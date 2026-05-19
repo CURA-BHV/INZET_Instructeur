@@ -68,7 +68,7 @@ const ChallengeModal: React.FC<Props> = ({ challenger, activeTeams, onClose, onC
             </div>
             <div>
               <h2 className="text-xl font-black text-white uppercase tracking-tighter font-serif">Team Uitdaging</h2>
-              <p className="text-slate-400 text-xs font-bold uppercase">Duel om grondstoffen</p>
+              <p className="text-slate-400 text-xs font-bold uppercase">Duel om de inzetmiddelen</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-slate-400 transition-colors">
