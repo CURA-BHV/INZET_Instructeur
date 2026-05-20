@@ -38,7 +38,18 @@ const Leaderboard: React.FC<Props> = ({ teams }) => {
     };
   }).sort((a, b) => b.score - a.score);
 
-  const highestScore = teamsWithScores[0].score;
+  const highestScore = teamsWithScores[0]?.score || 0;
+
+  let currentRank = 1;
+  const teamsWithRanks = teamsWithScores.map((team, index) => {
+    if (index > 0 && team.score < teamsWithScores[index - 1].score) {
+      currentRank = index + 1;
+    }
+    return {
+      ...team,
+      displayRank: highestScore === 0 ? "-" : currentRank.toString()
+    };
+  });
 
   return (
     <div className="mb-12">
@@ -72,7 +83,7 @@ const Leaderboard: React.FC<Props> = ({ teams }) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {teamsWithScores.map((team, index) => {
+        {teamsWithRanks.map((team, index) => {
           const config = TEAMS[team.color];
           const isLeader = team.score === highestScore && team.score > 0;
 
@@ -87,7 +98,7 @@ const Leaderboard: React.FC<Props> = ({ teams }) => {
             >
                 {/* Ranking Badge */}
                 <div className="absolute -top-3 -left-3 w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-black text-lg shadow-lg z-20 font-serif">
-                    {index + 1}
+                    {team.displayRank}
                 </div>
 
                 {/* Team Header */}
@@ -125,12 +136,22 @@ const Leaderboard: React.FC<Props> = ({ teams }) => {
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center mb-1">Status & Titels</p>
                         
                         {/* Brandblusser Points */}
-                        <div className="flex items-center justify-between px-4 py-3 rounded-2xl border bg-slate-50 border-transparent text-slate-700">
+                        <div className={`flex items-center justify-between px-4 py-3 rounded-2xl border transition-all ${
+                            team.extinguisherCount > 0
+                            ? 'bg-red-50 border-red-200 text-slate-900 shadow-sm font-black'
+                            : 'bg-slate-50 border-transparent text-slate-300'
+                        }`}>
                             <div className="flex items-center gap-3">
-                                <ShieldCheck size={18} className="text-red-500" />
+                                <ShieldCheck size={18} className={team.extinguisherCount > 0 ? 'text-red-500' : 'text-slate-200'} />
                                 <span className="text-[11px] font-black uppercase">{team.extinguisherCount}x Blusser</span>
                             </div>
-                            <span className="font-black text-sm">+{team.stats.extinguisherPoints}</span>
+                            {team.extinguisherCount > 0 ? (
+                                <span className="font-black text-sm">+{team.stats.extinguisherPoints}</span>
+                            ) : (
+                                <span className="text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                                    0x
+                                </span>
+                            )}
                         </div>
 
                         {/* Langste Route Bonus */}

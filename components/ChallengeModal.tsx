@@ -278,10 +278,13 @@ const ChallengeModal: React.FC<Props> = ({ challenger, activeTeams, onClose, onC
                   {challengerCorrect ? (
                     <div className="flex items-center gap-2 bg-yellow-400 px-3 py-1 rounded-full text-[10px] font-black text-yellow-900 shadow-sm animate-in zoom-in-50">
                       <Star size={12} fill="currentColor" />
-                      1x KEUZE KAART
+                      1x KEUZE TOKEN
                     </div>
                   ) : (
-                    <button onClick={() => { setConfirmedQ1(false); setStep('question'); }} className="text-[8px] font-black text-indigo-600 uppercase border-b border-indigo-600">Correctie nodig?</button>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className="text-xs sm:text-sm font-black text-red-600 uppercase tracking-tight animate-in shake duration-300">GEEN TOKENS VERDIEND</span>
+                      <button onClick={() => { setConfirmedQ1(false); setStep('question'); }} className="text-[8px] font-black text-indigo-600 uppercase border-b border-indigo-600">Correctie nodig?</button>
+                    </div>
                   )}
                 </div>
 
@@ -297,10 +300,13 @@ const ChallengeModal: React.FC<Props> = ({ challenger, activeTeams, onClose, onC
                   {opponentCorrect ? (
                     <div className="flex items-center gap-2 bg-yellow-400 px-4 py-2 rounded-full text-xs font-black text-yellow-900 shadow-md animate-in zoom-in-50">
                       <Star size={14} fill="currentColor" />
-                      2x KEUZE KAARTEN
+                      2x KEUZE TOKENS
                     </div>
                   ) : (
-                    <button onClick={() => { setConfirmedQ2(false); setStep('question'); }} className="text-[8px] font-black text-indigo-600 uppercase border-b border-indigo-600">Correctie nodig?</button>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className="text-xs sm:text-sm font-black text-red-600 uppercase tracking-tight animate-in shake duration-300">GEEN TOKENS VERDIEND</span>
+                      <button onClick={() => { setConfirmedQ2(false); setStep('question'); }} className="text-[8px] font-black text-indigo-600 uppercase border-b border-indigo-600">Correctie nodig?</button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -308,7 +314,7 @@ const ChallengeModal: React.FC<Props> = ({ challenger, activeTeams, onClose, onC
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-start gap-3">
                   <AlertCircle size={16} className="text-slate-400 mt-0.5" />
                   <p className="text-[10px] text-slate-500 leading-tight">
-                    <strong>Instructie:</strong> Geef de fysieke kaarten aan de teams zoals hierboven beschreven. Klik daarna op de knop om het dashboard bij te werken.
+                    <strong>Instructie:</strong> Geef de fysieke tokens aan de teams zoals hierboven beschreven.
                   </p>
               </div>
 

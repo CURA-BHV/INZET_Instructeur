@@ -15,7 +15,7 @@ export const RESOURCE_CONFIG: Record<Resource, { label: string; color: string; i
   tijd: { label: 'Tijd', color: 'bg-res-tijd', icon: Clock },
   besluitkracht: { label: 'Besluitkracht', color: 'bg-res-besluitkracht', icon: Gavel },
   materiaal: { label: 'Materiaal', color: 'bg-res-materiaal', icon: Package },
-  keuze: { label: 'Kaart naar keuze', color: 'bg-yellow-500', icon: Star },
+  keuze: { label: 'Token naar keuze', color: 'bg-yellow-500', icon: Star },
 };
 
 export const BUILDING_COSTS: Record<string, Array<{ resource: Resource; amount: number }>> = {
